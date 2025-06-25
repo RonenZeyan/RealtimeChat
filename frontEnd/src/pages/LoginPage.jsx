@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
+import { AuthContext } from '../../context/AuthContext';
 
 const LoginPage = () => {
 
@@ -10,6 +11,9 @@ const LoginPage = () => {
   const [bio, setBio] = useState("");
   const [isDataSubmited, setIsDataSubmited] = useState(false);
 
+  //get context
+  const { login } = useContext(AuthContext);
+
   async function handleSubmitForm(e) {
     e.preventDefault();
     if (currState === "Register" && !isDataSubmited) {  //register before bio
@@ -17,12 +21,8 @@ const LoginPage = () => {
       console.log({ fullName, email, password });
       return;
     }
-    else if (currState === "Register" && isDataSubmited) {  //in case submit register and set bio
-      console.log({ fullName, email, password, bio });
-    }
-    else{  //in case its login
 
-    }
+    login(currState === "Register" ? "Register" : "Login", { fullName, email, password, bio })
 
   }
 

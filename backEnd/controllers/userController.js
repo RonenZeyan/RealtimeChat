@@ -36,8 +36,7 @@ export const register = async (req, res) => {
             bio,
         });
 
-        const token = generateToken(newUser._id);
-
+        const token = await generateToken(newUser._id);
         res.status(201).json({ success: true, newUser, token, message: "Account Created Successfully." });
 
     } catch (error) {
@@ -64,7 +63,9 @@ export const login = async (req, res) => {
             return res.status(400).json({ success: false, message: "Email or Password Invalid" })
         }
 
-        const token = generateToken(newUser._id);
+        const token = await generateToken(user_data._id);
+        console.log(token);
+        
         res.status(201).json({ success: true, user_data, token, message: "Account logged in Successfully." });
 
 

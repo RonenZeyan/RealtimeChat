@@ -1,22 +1,38 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
 import { useNavigate } from "react-router-dom"
+import { AuthContext } from '../../context/AuthContext';
 
 const ProfilePage = () => {
 
+  const { authUser, updateProfile } = useContext(AuthContext);
+
   //useState Hooks
   const [selectedImg, setSelectedImg] = useState(null);
-  const [name, setName] = useState("Martin Johnson");
-  const [bio, setBio] = useState("hi everyone Iam Using RonenChat");
+  const [name, setName] = useState(authUser.fullName);
+  const [bio, setBio] = useState(authUser.bio);
 
   //useNavigate Hooks
   const nav = useNavigate();
 
   //handle Submit Form
-  async function handleSubmitForm(e){
+  async function handleSubmitForm(e) {
     e.preventDefault();
-    alert(console.log({name,bio}));
-    nav("/")
+    if (!selectedImg) {
+      await updateProfile({ bio, fullName: name });
+      nav("/")
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImg);
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      await updateProfile({ profilePic: base64Image, bio, fullName: name });
+      nav("/")
+
+    }
+
   }
 
   return (
@@ -33,7 +49,7 @@ const ProfilePage = () => {
           <input onChange={(e) => { setBio(e.target.value) }} rows={4} value={bio} type="text" required placeholder='Your Bio' className='p-2 border focus:ring-violet-500 border-gray-500 rounded-md focus:outline-none focus:ring-2' />
           <button type='submit' className='bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer'>Update Your Profile</button>
         </form>
-        <img className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10' src={assets.logo_icon} alt="Chat Logo" />
+        <img className={`max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10 ${selectedImg && 'rounded-full'}`} src={authUser?.profilePic || assets.logo_icon} alt="Chat Logo" />
       </div>
     </div>
   )

@@ -48,7 +48,7 @@ app.use(express.json({ limit: "4mb" })); //set files until 4MB
 app.use(cors());
 
 //Routes setup
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
     res.send("Server Is Live")
 });
 
@@ -58,6 +58,10 @@ app.use("/api/messages", messageRouter);
 //Connect To DB
 await connectDB();
 
-const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => console.log(`Server Is Running On: http://localhost:${PORT}`));
+if(process.env.NODE_ENV!=='production'){
+    const PORT = process.env.PORT || 3000;
+    server.listen(PORT, () => console.log(`Server Is Running On: http://localhost:${PORT}`));
+}
+
+export default server;

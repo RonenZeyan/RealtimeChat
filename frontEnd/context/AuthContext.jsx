@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [socket, setSocket] = useState(null);
+    const [loading,setLoading] = useState(true);
 
     //check if user is authenticated and if so, set the user data and connect the socket 
     const checkAuth = async () => {
@@ -26,6 +27,8 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             toast.error(error.message)
+        } finally{
+            setLoading(false);
         }
     }
 
@@ -92,8 +95,8 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (token) {
             axios.defaults.headers.common["authorization"] = `bearer ${token}`; //add the token for all axios requests
-            checkAuth();
         }
+        checkAuth();
     }, [token]);
 
     const value = {
@@ -104,6 +107,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateProfile,
+        loading,
     }
 
     return (
